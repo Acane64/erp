@@ -1,0 +1,373 @@
+/* ============================================================
+   AL NUBRAS ERP — Master Stylesheet
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap');
+
+/* ---- 1. Design Tokens ---- */
+:root {
+  --color-bg: #d8cbb8;
+  --color-primary: #6b4c3a;
+  --color-primary-hover: #50382a;
+  --color-white: #ffffff;
+  --color-text: #2b1a10;
+  --color-text-light: #8a7565;
+  --color-border: #c4b49e;
+  --color-shadow: rgba(107, 76, 58, 0.15);
+  --font-family: 'Outfit', sans-serif;
+}
+
+/* ---- 2. Reset & Base ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: var(--font-family);
+  color: var(--color-primary);
+  background: #c4b8a5;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+button { font-family: var(--font-family); cursor: pointer; border: none; outline: none; }
+input, select, textarea { font-family: var(--font-family); font-size: 0.95rem; outline: none; }
+
+/* ---- 3. App Container (Phone Frame) ---- */
+#app-container {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  background: var(--color-bg);
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+@media (min-width: 600px) {
+  body { padding: 24px 0; }
+  #app-container {
+    min-height: calc(100vh - 48px);
+    border-radius: 40px;
+    border: 8px solid #333;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+  }
+}
+@media (max-width: 599px) {
+  body { background: var(--color-bg); }
+}
+
+/* ---- 4. View & Animation ---- */
+.view {
+  padding: 28px 22px;
+  animation: fadeIn 0.3s ease both;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- 5. Logo ---- */
+.logo-container { text-align: center; margin-bottom: 25px; margin-top: 25px; }
+.logo-container h2 { font-size: 2.2rem; font-weight: 500; letter-spacing: 5px; margin-bottom: -5px; direction: rtl; }
+.logo-container h1 { font-size: 1.8rem; font-weight: 600; letter-spacing: 3px; }
+
+/* ---- 6. Input Fields ---- */
+.input-field {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 30px;
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  color: var(--color-primary);
+  text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-field:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-shadow); }
+.input-field::placeholder { color: var(--color-text-light); }
+.row-inputs { display: flex; gap: 10px; }
+.row-inputs .input-field { flex: 1; }
+select.input-field { appearance: auto; }
+
+/* ---- 7. Buttons ---- */
+.btn {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 30px;
+  border: none;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+  text-align: center;
+  box-shadow: 0 4px 10px var(--color-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn:hover { background: var(--color-primary-hover); transform: translateY(-1px); }
+.btn:active { transform: scale(0.97); }
+.btn-secondary { background: transparent; color: var(--color-primary); box-shadow: none; border: 1px solid var(--color-border); }
+.btn-secondary:hover { background: rgba(107,76,58,0.08); }
+
+/* ---- 8. Top Navigation ---- */
+.top-nav { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+.back-btn {
+  display: flex; align-items: center; gap: 4px; cursor: pointer;
+  font-weight: 600; font-size: 0.9rem; color: var(--color-primary);
+  transition: transform 0.2s;
+}
+.back-btn:hover { transform: translateX(-3px); }
+.back-btn svg { fill: var(--color-primary); }
+
+/* ---- 9. Hub Title ---- */
+.hub-title {
+  text-align: center; font-size: 1.2rem; margin: 18px 0;
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* ---- 10. Grid Menu (Hub Icons) ---- */
+.grid-menu { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 8px; }
+.grid-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s; }
+.grid-item:hover { transform: translateY(-4px); }
+.grid-icon {
+  width: 70px; height: 70px; border-radius: 50%; background: #c4b49e;
+  display: flex; justify-content: center; align-items: center; margin-bottom: 10px;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.1); transition: background 0.2s;
+  color: var(--color-primary);
+}
+.grid-item:hover .grid-icon { background: #b8a68d; }
+.grid-icon svg { fill: var(--color-primary); }
+.grid-label { font-size: 0.78rem; font-weight: 600; text-align: center; text-transform: uppercase; letter-spacing: 0.3px; }
+
+/* ---- 11. Category Items ---- */
+.category-item {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--color-white); border-radius: 30px; padding: 10px 20px;
+  cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+  margin-bottom: 10px; transition: all 0.2s;
+}
+.category-item:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.08); }
+.category-label { font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px; }
+.category-icon {
+  width: 38px; height: 38px; border-radius: 50%; background: var(--color-primary);
+  display: flex; justify-content: center; align-items: center; flex-shrink: 0;
+}
+.category-icon svg { fill: var(--color-white); width: 18px; height: 18px; }
+
+/* ---- 12. Bottom Cart Button ---- */
+.bottom-cart-container { margin-top: auto; display: flex; justify-content: center; padding-top: 18px; }
+.cart-btn {
+  background: var(--color-white); color: var(--color-primary); border-radius: 30px;
+  padding: 10px 22px; display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  transition: all 0.2s; position: relative;
+}
+.cart-btn:hover { background: var(--color-primary); color: var(--color-white); }
+.cart-btn .icon {
+  background: var(--color-primary); border-radius: 50%; width: 30px; height: 30px;
+  display: flex; justify-content: center; align-items: center; transition: background 0.2s;
+}
+.cart-btn:hover .icon { background: var(--color-white); }
+.cart-btn .icon svg { fill: var(--color-white); transition: fill 0.2s; }
+.cart-btn:hover .icon svg { fill: var(--color-primary); }
+.cart-badge {
+  position: absolute; top: -6px; right: -6px; background: #e74c3c; color: white;
+  width: 22px; height: 22px; border-radius: 50%; font-size: 0.7rem; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ---- 13. Tab Group ---- */
+.tab-group { display: flex; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; }
+.tab {
+  flex: 1; min-width: 70px; padding: 8px 12px; border-radius: 20px; text-align: center;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  background: var(--color-white); color: var(--color-primary);
+  border: 1px solid var(--color-border); transition: all 0.2s;
+}
+.tab:hover { background: rgba(107,76,58,0.08); }
+.tab.active { background: var(--color-primary); color: var(--color-white); border-color: var(--color-primary); }
+
+/* ---- 14. Kandura Measurement ---- */
+.kandura-schematic {
+  background: var(--color-white); border-radius: 15px; padding: 18px;
+  margin-bottom: 15px; border: 2px dashed var(--color-border);
+}
+.measurement-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+.measurement-field label {
+  display: block; font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; margin-bottom: 3px; opacity: 0.7;
+}
+.measurement-field .input-field { margin-bottom: 0; padding: 10px 12px; font-size: 0.85rem; }
+
+/* ---- 15. Product Grid ---- */
+.product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.product-card {
+  background: var(--color-white); border-radius: 15px; overflow: hidden;
+  cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.05); transition: all 0.2s;
+}
+.product-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+.product-img {
+  width: 100%; height: 120px; background: #e8ddd0; display: flex;
+  align-items: center; justify-content: center; font-weight: 600;
+  font-size: 0.9rem; color: var(--color-primary);
+}
+.product-card-name { padding: 8px 12px 2px; font-weight: 600; font-size: 0.8rem; }
+.product-card-price { padding: 2px 12px 10px; font-size: 0.75rem; opacity: 0.7; }
+
+/* ---- 16. Product Detail ---- */
+.product-detail-img {
+  width: 100%; height: 180px; background: #e8ddd0; border-radius: 15px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 1rem; color: var(--color-primary);
+  margin-bottom: 15px; flex-direction: column;
+}
+
+/* Color Swatches */
+.color-swatches { display: flex; gap: 10px; margin-bottom: 12px; }
+.color-swatch {
+  width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+  transition: transform 0.2s; box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+.color-swatch:hover { transform: scale(1.15); }
+
+/* Size Selector */
+.size-selector { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.size-btn {
+  width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--color-border);
+  background: var(--color-white); color: var(--color-primary); font-weight: 600;
+  font-size: 0.8rem; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.size-btn:hover { border-color: var(--color-primary); }
+.size-btn.active { background: var(--color-primary); color: var(--color-white); border-color: var(--color-primary); }
+
+/* Quantity Selector */
+.qty-selector {
+  display: flex; align-items: center; justify-content: center; gap: 18px; margin-bottom: 12px;
+}
+.qty-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--color-border);
+  background: var(--color-white); font-size: 1.2rem; font-weight: 600;
+  color: var(--color-primary); cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.qty-btn:hover { background: var(--color-primary); color: var(--color-white); }
+#qty-val { font-size: 1.3rem; font-weight: 600; min-width: 30px; text-align: center; }
+
+/* ---- 17. Data Tables ---- */
+.data-table {
+  width: 100%; border-collapse: collapse; font-size: 0.75rem;
+  background: rgba(255,255,255,0.5); border-radius: 12px; overflow: hidden;
+}
+.data-table th, .data-table td { padding: 10px 8px; text-align: left; border-bottom: 1px solid rgba(107,76,58,0.15); }
+.data-table th { font-weight: 600; text-transform: uppercase; background: rgba(255,255,255,0.7); font-size: 0.7rem; }
+.data-table tr:hover { background: rgba(255,255,255,0.3); }
+
+/* ---- 18. Invoice Box & Totals ---- */
+.invoice-box {
+  background: var(--color-white); border-radius: 15px; padding: 18px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06); margin-top: 8px;
+}
+.total-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
+
+/* ---- 19. Payment Modes ---- */
+.payment-modes { display: flex; gap: 8px; margin: 12px 0; }
+.payment-btn {
+  flex: 1; padding: 10px 8px; border-radius: 20px; border: 1px solid var(--color-primary);
+  background: var(--color-white); color: var(--color-primary); text-align: center;
+  font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+}
+.payment-btn:hover { background: rgba(107,76,58,0.08); }
+.payment-btn.active { background: var(--color-primary); color: var(--color-white); }
+
+/* ---- 20. Status Badges ---- */
+.status-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 12px;
+  font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+}
+.status-ready { background: #eafaf1; color: #2ecc71; }
+.status-sewing { background: #fef5e7; color: #f39c12; }
+.status-pending { background: #fdedec; color: #e74c3c; }
+.status-started { background: #ebf5fb; color: #3498db; }
+
+/* ---- 21. Order Tracker ---- */
+.tracker-bar { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 10px; position: relative; }
+.tracker-bar::before {
+  content: ''; position: absolute; top: 10px; left: 10px; right: 10px;
+  height: 3px; background: var(--color-border); z-index: 0;
+}
+.tracker-step { display: flex; flex-direction: column; align-items: center; z-index: 1; flex: 1; }
+.tracker-dot {
+  width: 20px; height: 20px; border-radius: 50%; background: var(--color-border);
+  margin-bottom: 5px; transition: all 0.3s; border: 3px solid var(--color-bg);
+}
+.tracker-step.active .tracker-dot { background: var(--color-primary); box-shadow: 0 0 0 3px var(--color-shadow); }
+.tracker-label { font-size: 0.55rem; text-align: center; font-weight: 500; opacity: 0.6; }
+.tracker-step.active .tracker-label { opacity: 1; font-weight: 600; color: var(--color-primary); }
+
+/* ---- 22. Warning Box ---- */
+.warning-box {
+  background: #fef5e7; border: 1px solid #f5d89a; border-radius: 12px;
+  padding: 14px 16px; font-size: 0.85rem; color: #8a6d3b; margin-bottom: 10px;
+}
+
+/* ---- 23. Search Bar ---- */
+.search-bar { display: flex; gap: 8px; margin-bottom: 15px; align-items: center; }
+.search-bar .input-field { margin-bottom: 0; flex: 1; }
+.search-bar .btn { margin-bottom: 0; }
+
+/* ---- 24. Modal Overlay ---- */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45); display: flex;
+  align-items: center; justify-content: center; z-index: 1000;
+  animation: fadeIn 0.2s ease both;
+}
+.modal-card {
+  background: var(--color-white); border-radius: 20px; padding: 24px;
+  max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.modal-header h3 { font-size: 1.1rem; font-weight: 600; }
+.modal-close { cursor: pointer; opacity: 0.5; transition: opacity 0.2s; }
+.modal-close:hover { opacity: 1; }
+.modal-body { margin-bottom: 15px; font-size: 0.9rem; }
+.modal-footer { display: flex; gap: 8px; }
+.modal-footer .btn { flex: 1; }
+
+/* ---- 25. Toast Notifications ---- */
+#toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  background: var(--color-primary); color: var(--color-white); padding: 12px 24px;
+  border-radius: 30px; font-weight: 500; font-size: 0.85rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2); opacity: 0; transform: translateY(-10px);
+  transition: all 0.3s ease; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ---- 26. Print Styles ---- */
+@media print {
+  body { background: white !important; }
+  #app-container { border: none !important; border-radius: 0 !important; box-shadow: none !important; max-width: 100% !important; }
+  .top-nav, .back-btn, .bottom-cart-container, .btn, #toast-container, .modal-overlay { display: none !important; }
+  .view { padding: 10px !important; }
+}
+
+/* ---- 27. Scrollbar ---- */
+#app-container::-webkit-scrollbar { width: 4px; }
+#app-container::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+#app-container::-webkit-scrollbar-track { background: transparent; }
+
+/* ---- 28. Misc ---- */
+textarea.input-field { resize: vertical; text-align: left; border-radius: 15px; min-height: 60px; }
+label { font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+input[type="checkbox"] { accent-color: var(--color-primary); }
