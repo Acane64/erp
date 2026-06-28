@@ -43,10 +43,10 @@ const state = {
     { id: 3, type: 'Cotton 03', code: 'C03-D2', color: 'Beige', category: 'Mugasr', date: '2025-03-20' }
   ],
   inventoryItems: [
-    { id: 1, name: 'Classic Sandal', code: 'AN-S12', type: 'Sandal', color: 'White', sizes: [38,39,40,41,42], qty: 24, price: 150 },
-    { id: 2, name: 'Sport Sandal', code: 'AN-S54', type: 'Sandal', color: 'Brown', sizes: [39,40,41,42,43], qty: 18, price: 180 },
-    { id: 3, name: 'Premium Sandal', code: 'AN-S87', type: 'Sandal', color: 'Black', sizes: [38,39,40,41,42,43], qty: 15, price: 220 },
-    { id: 4, name: 'Luxury Sandal', code: 'AN-S74', type: 'Sandal', color: 'Tan', sizes: [39,40,41,42], qty: 10, price: 280 },
+    { id: 1, name: 'Model 1', code: 'AN-S12', type: 'Sandal', color: 'White', sizes: [36,37,38,39,40,41,42,43], qty: 24, price: 150, image: 'src/assets/products/sandal-white.png', colors: ['White', 'Tan', 'Brown', 'Black'] },
+    { id: 2, name: 'Model 1', code: 'AN-S54', type: 'Sandal', color: 'Brown', sizes: [36,37,38,39,40,41,42,43], qty: 18, price: 180, image: 'src/assets/products/sandal-brown.png', colors: ['Brown', 'Black', 'Tan', 'White'] },
+    { id: 3, name: 'Model 1', code: 'AN-S87', type: 'Sandal', color: 'Black', sizes: [36,37,38,39,40,41,42,43], qty: 15, price: 220, image: 'src/assets/products/sandal-premium.png', colors: ['Black', 'Brown', 'Tan', 'White'] },
+    { id: 4, name: 'Model 1', code: 'AN-S74', type: 'Sandal', color: 'Black', sizes: [36,37,38,39,40,41,42,43], qty: 10, price: 280, image: 'src/assets/products/sandal-black.png', colors: ['Black', 'Brown', 'Tan', 'White'] },
     { id: 5, name: 'Formal Jacket', code: 'AN-J01', type: 'Jacket', color: 'Black', sizes: [38,40,42,44], qty: 12, price: 350 },
     { id: 6, name: 'Casual Jacket', code: 'AN-J02', type: 'Jacket', color: 'Navy', sizes: [38,40,42,44], qty: 8, price: 300 },
     { id: 7, name: 'Shemagh', code: 'AN-G46', type: 'Accessory', color: 'Red/White', sizes: [48,50,52,54], qty: 50, price: 45 },
@@ -84,6 +84,16 @@ const state = {
 function $(id) { return document.getElementById(id); }
 function formatCurrency(n) { return parseFloat(n).toFixed(2) + ' AED'; }
 function genOrderNum() { state.orderCounter++; return 'A2025-' + String(state.orderCounter).padStart(4, '0'); }
+function clientName() { return state.client.name || 'MR. RADWAN'; }
+function clientMobile() { return state.client.mobile || '050 555 5522'; }
+function clientBlock(extraClass) {
+  return '<div class="client-card ' + (extraClass || '') + '">' +
+    '<div class="eyebrow">ORDERING FOR:</div>' +
+    '<strong>' + clientName() + '</strong>' +
+    '<span>' + clientMobile() + '</span>' +
+    '<span>' + state.client.location + '</span>' +
+    '</div>';
+}
 
 function showToast(msg) {
   const c = $('toast-container');
@@ -108,7 +118,7 @@ function topNav(backView, backLabel, rightHtml) {
   return '<div class="top-nav"><div class="back-btn" onclick="navigate(\'' + backView + '\')">' + ICO.back + ' ' + backLabel + '</div>' + (rightHtml || '') + '</div>';
 }
 function salesPersonInfo() {
-  return '<div style="text-align:right;font-size:0.8rem;font-weight:600;"><div>MOHAMMAD MOHAMMAD</div><div style="opacity:0.6">SALES PERSON</div></div>';
+  return '<div class="staff-chip"><div><strong>MOHAMMAD MOHAMMAD</strong><span>SALES PERSON</span></div><div class="staff-avatar">' + ICO.user + '</div></div>';
 }
 
 function statusBadge(s) {
@@ -120,6 +130,15 @@ function statusBadge(s) {
   else if (sl === 'started' || sl === 'cutting' || sl === 'measured') cls += 'status-started';
   else cls += 'status-started';
   return '<span class="' + cls + '">' + s + '</span>';
+}
+function pageHeading(title, rightHtml) {
+  return '<div class="page-heading"><h2>' + title + '</h2>' + (rightHtml || '') + '</div>';
+}
+function panel(html, extra) {
+  return '<div class="form-panel ' + (extra || '') + '">' + html + '</div>';
+}
+function moneyInput(id, value, oninput) {
+  return '<input type="number" id="' + id + '" value="' + value + '" style="width:86px;text-align:right;border:1px solid var(--color-border);border-radius:8px;padding:5px" ' + (oninput ? 'oninput="' + oninput + '"' : '') + '>';
 }
 
 // ---- Router ----
@@ -137,19 +156,22 @@ var views = {};
 // 1. Login
 views.login = function() {
   $('app').innerHTML = '<div class="view">' +
-    '<div class="logo-container" style="margin-top:60px"><h2>النبراس</h2><h1>AL NUBRAS</h1></div>' +
-    '<div style="margin-top:40px">' +
+    '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;min-height:78vh">' +
+    '<div class="logo-container"><h2>النبراس</h2><h1>AL NUBRAS</h1></div>' +
+    '<div style="margin-top:34px">' +
     '<input type="text" class="input-field" placeholder="USERNAME" id="f-user">' +
     '<input type="password" class="input-field" placeholder="PASSWORD" id="f-pass">' +
-    '<button class="btn" onclick="navigate(\'adminHub\')">LOG IN</button>' +
-    '<div style="text-align:center;margin-top:15px"><span style="opacity:0.6;cursor:pointer;text-decoration:underline" onclick="showToast(\'Contact your administrator\')">FORGOT PASSWORD</span></div>' +
-    '</div></div>';
+    '<button class="btn" style="width:180px;align-self:center;margin:18px auto 0" onclick="navigate(\'adminHub\')">LOG IN</button>' +
+    '<div style="text-align:center;margin-top:15px"><span style="color:var(--color-muted);font-family:var(--font-mono);letter-spacing:.12em;cursor:pointer;text-decoration:underline" onclick="showToast(\'Contact your administrator\')">FORGOT PASSWORD</span></div>' +
+    '</div></div></div>';
 };
 
 // 2. Admin Hub
 views.adminHub = function() {
   $('app').innerHTML = '<div class="view">' +
     topNav('login', 'LOG OUT') +
+    '<div style="flex:1;display:flex;flex-direction:column;justify-content:center">' +
+    '<div style="width:120px;height:120px;border-radius:50%;background:rgba(236,221,202,.75);margin:0 auto 24px;display:flex;align-items:center;justify-content:center;color:var(--color-primary)">' + ICO.user + '</div>' +
     '<div class="hub-title">WELCOME MR. ADMIN</div>' +
     '<div class="grid-menu">' +
     gridItem('salesHub', ICO.dollar, 'Sales') +
@@ -158,7 +180,8 @@ views.adminHub = function() {
     gridItem('deliveryHub', ICO.truck, 'Delivery') +
     gridItem(null, ICO.megaphone, 'Marketing', "showToast('Marketing module coming soon')") +
     gridItem('accountantHub', ICO.user, 'Finance') +
-    '</div></div>';
+    gridItem(null, ICO.box, 'Admin', "showToast('Admin tools coming soon')") +
+    '</div></div></div>';
 };
 function gridItem(view, icon, label, customClick) {
   var click = customClick ? customClick : "navigate('" + view + "')";
@@ -169,25 +192,27 @@ function gridItem(view, icon, label, customClick) {
 views.salesHub = function() {
   $('app').innerHTML = '<div class="view">' +
     topNav('adminHub', 'EXIT') +
+    '<div style="flex:1;display:flex;flex-direction:column;justify-content:center">' +
     '<div class="hub-title">WELCOME MR. SALES GUY</div>' +
     '<div class="grid-menu">' +
     gridItem('createSales', ICO.dollar, 'Create Sales') +
     gridItem('salesOperations', ICO.mfg, 'Sales Operations') +
     gridItem('salesPending', ICO.box, 'Sales Pending') +
     gridItem('orderHistory', ICO.truck, 'Order History') +
-    '</div></div>';
+    '</div></div></div>';
 };
 
 // 4. Create Sales
 views.createSales = function() {
   $('app').innerHTML = '<div class="view">' +
     topNav('salesHub', 'EXIT', salesPersonInfo()) +
-    '<div style="text-align:center;margin:30px 0"><div style="width:100px;height:100px;border-radius:50%;background:var(--color-primary);margin:0 auto;display:flex;align-items:center;justify-content:center;color:white">' + ICO.dollar + '</div></div>' +
+    '<div style="flex:1;display:flex;flex-direction:column;justify-content:center">' +
+    '<div style="text-align:center;margin:18px 0"><div style="width:110px;height:110px;border-radius:50%;background:rgba(236,221,202,.78);margin:0 auto;display:flex;align-items:center;justify-content:center;color:var(--color-primary)">' + ICO.dollar + '</div></div>' +
     '<div class="hub-title" style="font-size:1.6rem">SALES</div>' +
     '<input type="text" class="input-field" placeholder="MOBILE NUMBER" id="f-mobile" value="' + state.client.mobile + '">' +
     '<input type="text" class="input-field" placeholder="CLIENT NAME" id="f-name" value="' + state.client.name + '">' +
-    '<button class="btn" onclick="state.client.mobile=$$(\'f-mobile\').value||\'050 555 5522\';state.client.name=$$(\'f-name\').value||\'MR. RADWAN\';navigate(\'orderCategory\')">START / CREATE</button>' +
-    '</div>';
+    '<button class="btn" style="width:240px;align-self:center;margin:18px auto 0" onclick="state.client.mobile=$$(\'f-mobile\').value||\'050 555 5522\';state.client.name=$$(\'f-name\').value||\'MR. RADWAN\';navigate(\'orderCategory\')">START / CREATE</button>' +
+    '</div></div>';
 };
 function $$(id) { return document.getElementById(id); }
 
@@ -196,23 +221,27 @@ views.orderCategory = function() {
   var badge = state.cart.length > 0 ? '<span class="cart-badge">' + state.cart.length + '</span>' : '';
   $('app').innerHTML = '<div class="view">' +
     topNav('createSales', 'EXIT', salesPersonInfo()) +
-    '<div style="margin-bottom:15px"><div style="opacity:0.6;font-size:0.8rem">ORDERING FOR:</div><div style="font-weight:600;font-size:1.1rem">' + (state.client.name || 'MR. RADWAN') + '</div><div>' + (state.client.mobile || '050 555 5522') + '</div><div>' + state.client.location + '</div></div>' +
-    '<div class="logo-container" style="margin:15px 0"><h2 style="font-size:1.8rem">النبراس</h2><h1 style="font-size:1.6rem">AL NUBRAS</h1></div>' +
+    clientBlock() +
+    '<div class="logo-container" style="margin:42px 0 28px"><h2>النبراس</h2><h1>AL NUBRAS</h1></div>' +
+    '<div class="category-list">' +
     catItem('kanduraDetails', 'KANDURA') +
     catItem('underGarmentsGrid', 'UNDER GARMENTS') +
     catItem('jacketGrid', 'JACKET') +
     catItem('headDressGrid', 'HEAD DRESS') +
     catItem('sandalGrid', 'SANDAL') +
     '<div class="category-item" onclick="showToast(\'Customize order coming soon\')"><span class="category-label">CUSTOMIZE ORDER</span><div class="category-icon">' + ICO.shirt + '</div></div>' +
-    '<div style="display:flex;gap:10px;margin-top:15px">' +
-    '<div class="category-item" style="flex:1;justify-content:center" onclick="navigate(\'orderTracker\')"><span class="category-label" style="font-size:0.8rem">TRACK ORDERS</span></div>' +
-    '<div class="category-item" style="flex:1;justify-content:center" onclick="navigate(\'orderHistory\')"><span class="category-label" style="font-size:0.8rem">ORDER RECORDS</span></div>' +
+    '<div class="category-item" onclick="navigate(\'orderTracker\')"><span class="category-label">TRACK EXISTING ORDER(S)</span><div class="category-icon">' + ICO.search + '</div></div>' +
+    '<div class="category-item" onclick="navigate(\'orderHistory\')"><span class="category-label">ORDER RECORD</span><div class="category-icon">' + ICO.print + '</div></div>' +
     '</div>' +
     '<div class="bottom-cart-container"><div class="cart-btn" onclick="navigate(\'cartView\')">' + badge + 'VIEW CART <div class="icon">' + ICO.cart + '</div></div></div>' +
     '</div>';
 };
 function catItem(view, label) {
-  return '<div class="category-item" onclick="navigate(\'' + view + '\')"><span class="category-label">' + label + '</span><div class="category-icon">' + ICO.shirt + '</div></div>';
+  var icon = label === 'SANDAL' ? ICO.truck :
+    label === 'JACKET' ? ICO.user :
+    label === 'HEAD DRESS' ? ICO.user :
+    label === 'UNDER GARMENTS' ? ICO.shirt : ICO.shirt;
+  return '<div class="category-item" onclick="navigate(\'' + view + '\')"><span class="category-label">' + label + '</span><div class="category-icon">' + icon + '</div></div>';
 }
 
 // 6. Kandura Details
@@ -224,33 +253,41 @@ views.kanduraDetails = function() {
   }).join('');
 
   $('app').innerHTML = '<div class="view">' +
-    topNav('orderCategory', 'BACK', salesPersonInfo()) +
-    '<div class="hub-title">KANDURA CUSTOMIZATION</div>' +
+    topNav('orderCategory', 'EXIT', salesPersonInfo()) +
+    clientBlock() +
     '<div class="tab-group">' + tabs + '</div>' +
-    '<div class="kandura-schematic"><div style="font-weight:600;margin-bottom:10px">' + state.selectedKanduraStyle + ' Kandura Measurements</div>' +
-    '<div class="measurement-grid">' +
-    mField('Length', '61 1/4') + mField('Back Length', '61') + mField('Shoulder', '17 3/4') + mField('Arm Length', '25 3/4') +
-    mField('Cuff Width', '6') + mField('Waist', '23') + mField('Chest', '34') + mField('Hip', '32') + mField('Bottom Width', '31') +
-    '</div></div>' +
-    '<div style="font-weight:600;margin:10px 0">Fabric Selection</div>' +
+    '<div class="kandura-schematic">' +
+    '<div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:6px;font-family:var(--font-mono);font-size:1rem">QTY: <input type="number" class="input-field" id="f-kqty" value="3" min="1" style="width:72px;min-height:42px;margin:0;padding:6px"> pc(s)</div>' +
+    '<div class="measurement-hero">' +
+    '<div class="measurement-summary"><h3>SUMMARY:</h3>' +
+    '<div>LENGTH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;61 1/4 in</div><div>BACK LENGTH&nbsp;&nbsp;61 in</div><div>SHOULDER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17 3/4 in</div><div>ARM LENGTH&nbsp;&nbsp;&nbsp;25 3/4 in</div><div>CUFF WIDTH&nbsp;&nbsp;&nbsp;6 in</div><div>WAIST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23 in</div><div>CHEST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;34 in</div><div>HIP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32 in</div><div>BOTTOM WIDTH&nbsp;31 in</div></div>' +
+    '<div class="kandura-figure">' + kanduraSvg() +
+    '<span class="measure-tag" style="top:8%;left:46%">17 3/4</span><span class="measure-tag" style="top:18%;left:46%">15 3/4</span><span class="measure-tag" style="top:36%;left:46%">34</span><span class="measure-tag" style="top:49%;left:46%">23</span><span class="measure-tag" style="top:64%;left:46%">32</span><span class="measure-tag" style="bottom:4%;left:46%">31</span><span class="measure-tag" style="left:5%;top:38%">25 3/4</span><span class="measure-tag" style="left:2%;top:64%">6</span><span class="measure-tag" style="right:4%;top:64%">61 1/4</span>' +
+    '</div></div></div>' +
+    '<div class="option-label">FABRIC DETAILS</div>' +
     '<div class="row-inputs"><input class="input-field" placeholder="Fabric Type" id="f-ftype" value="Premium 01"><input class="input-field" placeholder="Color" id="f-fcolor" value="A1"></div>' +
-    '<div class="row-inputs"><input class="input-field" placeholder="Code" value="P01-A1" disabled><select class="input-field" id="f-assignee"><option>Self</option><option>Bob (Son)</option><option>Ahmed (Brother)</option></select></div>' +
-    '<div style="font-weight:600;margin:10px 0">Quick Add</div>' +
-    '<div style="display:flex;gap:10px;margin-bottom:10px"><label><input type="checkbox" id="chk-shirt"> Shirts (Size M)</label><label><input type="checkbox" id="chk-wizar"> Wizars (Size L)</label></div>' +
-    '<div style="font-weight:600;margin:10px 0">Notes</div>' +
-    '<textarea class="input-field" id="f-notes" style="border-radius:15px;text-align:left;min-height:60px" placeholder="Special instructions...">Customer wants double stitching on the back. Tarbush @ 22 inches.</textarea>' +
-    '<div class="row-inputs" style="margin-top:10px"><input type="number" class="input-field" id="f-kqty" value="3" min="1"><button class="btn" onclick="addKanduraToCart()">ADD TO CART</button></div>' +
+    '<div class="row-inputs"><input class="input-field" placeholder="Code" value="P 01- A1" disabled><select class="input-field" id="f-assignee"><option>Client - Radwan</option><option>Son - Bob</option><option>Brother - Ahmed</option></select></div>' +
+    '<button class="btn btn-secondary" onclick="showToast(\'Add person panel opened\')">' + ICO.user + ' ADD PERSON</button>' +
+    '<div class="option-label">ADD ITEMS</div>' +
+    '<div class="invoice-box" style="padding:12px"><div class="total-row"><label><input type="checkbox" id="chk-shirt" checked> SHIRT</label><span>QTY <input id="f-shirtqty" type="number" value="2" min="0" style="width:48px;border:1px solid var(--color-border);border-radius:8px;padding:4px;text-align:center"> SIZE M</span></div><div class="total-row"><label><input type="checkbox" id="chk-wizar" checked> WIZAR</label><span>QTY <input id="f-wizarqty" type="number" value="2" min="0" style="width:48px;border:1px solid var(--color-border);border-radius:8px;padding:4px;text-align:center"> SIZE L</span></div></div>' +
+    '<div class="option-label">ADDITIONAL NOTES</div>' +
+    '<textarea class="input-field" id="f-notes" placeholder="Special instructions...">CUSTOMER WANTS DOUBLE STITCHING ON THE BACK\n\nTARBUSH @ 22 INCHES</textarea>' +
+    '<div class="row-inputs" style="margin-top:8px"><button class="btn btn-secondary" onclick="showToast(\'Preview generated\')">' + ICO.search + ' PREVIEW</button><button class="btn" onclick="addKanduraToCart()">' + ICO.cart + ' ADD TO CART</button></div>' +
+    '<div class="bottom-cart-container" style="padding-top:4px"><div class="cart-btn" onclick="navigate(\'cartView\')">VIEW CART <div class="icon">' + ICO.cart + '</div></div></div>' +
     '</div>';
 };
+function kanduraSvg() {
+  return '<svg viewBox="0 0 220 320" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M82 40c8 14 48 14 56 0l34 25 36 96-33 19-30-69 7 171-42 8-42-8 7-171-30 69-33-19 36-96 34-25Z" fill="#fff" stroke="currentColor" stroke-width="2"/><path d="M82 40c7 28 49 28 56 0M98 58l12 26 12-26M110 84v88M83 48l22 55M137 48l-22 55M66 268l44 7 44-7M37 166l28 15M183 181l-28-15" stroke="currentColor" stroke-width="1.5"/></svg>';
+}
 function mField(label, val) {
   return '<div class="measurement-field"><label>' + label + '</label><input class="input-field" value="' + val + '" style="margin-bottom:5px"></div>';
 }
 function addKanduraToCart() {
   var qty = parseInt($$('f-kqty').value) || 1;
   var style = state.selectedKanduraStyle;
-  state.cart.push({ name: style + ' Kandura', qty: qty, price: 500, size: '-', color: $$('f-fcolor').value });
-  if ($$('chk-shirt') && $$('chk-shirt').checked) state.cart.push({ name: 'Shirts (M)', qty: qty, price: 40, size: 'M', color: 'White' });
-  if ($$('chk-wizar') && $$('chk-wizar').checked) state.cart.push({ name: 'Wizars (L)', qty: qty, price: 30, size: 'L', color: 'White' });
+  state.cart.push({ name: style + ' Kandura', qty: qty, price: 500, size: '-', color: $$('f-fcolor').value, note: $$('f-notes').value, assignedTo: $$('f-assignee').value });
+  if ($$('chk-shirt') && $$('chk-shirt').checked) state.cart.push({ name: 'Shirt', qty: parseInt($$('f-shirtqty').value) || qty, price: 50, size: 'M', color: 'White' });
+  if ($$('chk-wizar') && $$('chk-wizar').checked) state.cart.push({ name: 'Wizar', qty: parseInt($$('f-wizarqty').value) || qty, price: 62.5, size: 'L', color: 'White' });
   showToast('Added to cart!');
   navigate('orderCategory');
 }
@@ -259,17 +296,27 @@ function addKanduraToCart() {
 function renderProductGrid(title, type, backView) {
   var items = state.inventoryItems.filter(function(i) { return i.type === type; });
   var cards = items.map(function(item) {
+    var img = item.image ? '<img src="' + item.image + '" alt="' + item.name + '">' : item.code;
+    var dots = (item.colors || [item.color]).slice(0, 5).map(function(c) {
+      return '<span class="color-swatch" style="width:32px;height:32px;display:inline-block;background:' + colorCss(c) + '"></span>';
+    }).join('');
     return '<div class="product-card" onclick="showProductDetail(' + item.id + ',\'' + backView + '\')">' +
-      '<div class="product-img">' + item.code + '</div>' +
+      '<div class="product-img">' + img + '</div>' +
       '<div class="product-card-name">' + item.name + '</div>' +
-      '<div class="product-card-price">' + formatCurrency(item.price) + '</div></div>';
+      '<div class="product-card-price">' + item.code + '</div>' +
+      '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">' + dots + '</div></div>';
   }).join('');
   $('app').innerHTML = '<div class="view">' +
-    topNav('orderCategory', 'BACK') +
-    '<div class="hub-title">' + title + '</div>' +
+    topNav('orderCategory', 'EXIT', salesPersonInfo()) +
+    '<div style="display:flex;align-items:center;justify-content:flex-start;margin:14px 0 20px">' +
+    '<div class="category-item" style="width:210px;pointer-events:none"><span class="category-label">' + title + '</span><div class="category-icon">' + (type === 'Sandal' ? ICO.truck : ICO.shirt) + '</div></div></div>' +
     '<div class="product-grid">' + cards + '</div>' +
     '<div class="bottom-cart-container"><div class="cart-btn" onclick="navigate(\'cartView\')">VIEW CART <div class="icon">' + ICO.cart + '</div></div></div>' +
     '</div>';
+}
+function colorCss(c) {
+  var map = { White: '#f7f7f7', Brown: '#5a2f1e', Black: '#1f1f1f', Tan: '#c69a66', Red: '#b3342b', Navy: '#1d3148', Cream: '#efe1c9', 'Red/White': 'linear-gradient(135deg,#b3342b 0 50%,#fff 50%)' };
+  return map[c] || c.toLowerCase();
 }
 views.sandalGrid = function() { renderProductGrid('SANDALS', 'Sandal', 'sandalGrid'); };
 views.jacketGrid = function() { renderProductGrid('JACKETS', 'Jacket', 'jacketGrid'); };
@@ -286,25 +333,30 @@ function showProductDetail(itemId, backView) {
 views.productDetail = function() {
   var item = state.inventoryItems.find(function(i) { return i.id === state._detailItem; });
   if (!item) { navigate('orderCategory'); return; }
-  var colors = ['White', 'Brown', 'Black', 'Tan', 'Red'];
+  var colors = item.colors || ['White', 'Brown', 'Black', 'Tan'];
   var swatches = colors.map(function(c) {
-    return '<div class="color-swatch" style="background:' + c.toLowerCase() + ';border:2px solid ' + (c === item.color ? 'var(--color-primary)' : '#ccc') + '" onclick="this.parentElement.querySelectorAll(\'.color-swatch\').forEach(function(s){s.style.borderColor=\'#ccc\'});this.style.borderColor=\'var(--color-primary)\'"></div>';
+    var active = c === item.color ? ' active' : '';
+    return '<div class="color-swatch' + active + '" data-color="' + c + '" style="background:' + colorCss(c) + ';box-shadow:' + (c === item.color ? '0 0 0 4px rgba(123,70,31,.2)' : 'none') + '" onclick="this.parentElement.querySelectorAll(\'.color-swatch\').forEach(function(s){s.classList.remove(\'active\');s.style.boxShadow=\'none\'});this.classList.add(\'active\');this.style.boxShadow=\'0 0 0 4px rgba(123,70,31,.2)\'"></div>';
   }).join('');
   var sizes = (item.sizes || [36,37,38,39,40,41,42,43]).map(function(s) {
-    return '<button class="size-btn" onclick="this.parentElement.querySelectorAll(\'.size-btn\').forEach(function(b){b.classList.remove(\'active\')});this.classList.add(\'active\')">' + s + '</button>';
+    var cls = s === (item.sizes || [])[0] ? 'size-btn active' : 'size-btn';
+    return '<button class="' + cls + '" onclick="this.parentElement.querySelectorAll(\'.size-btn\').forEach(function(b){b.classList.remove(\'active\')});this.classList.add(\'active\')">' + s + '</button>';
   }).join('');
+  var img = item.image ? '<img src="' + item.image + '" alt="' + item.name + '">' : item.code + '<br>' + item.name;
 
   $('app').innerHTML = '<div class="view">' +
-    topNav(_detailBack, 'BACK') +
-    '<div class="product-detail-img">' + item.code + '<br>' + item.name + '</div>' +
-    '<div style="font-weight:600;margin:10px 0">COLOR</div>' +
+    topNav(_detailBack, 'RETURN', salesPersonInfo()) +
+    clientBlock() +
+    '<div class="product-detail-img">' + img + '</div>' +
+    '<div class="hub-title" style="text-align:left;margin:0 0 10px;font-family:var(--font-mono);font-size:2rem">' + item.name + '<br>' + item.code + '</div>' +
+    '<div class="option-label">PRICE</div><div style="font-family:var(--font-mono);font-size:1.35rem;margin-bottom:10px">' + formatCurrency(item.price) + '</div>' +
+    '<div class="option-label">COLOR</div>' +
     '<div class="color-swatches">' + swatches + '</div>' +
-    '<div style="font-weight:600;margin:10px 0">SIZE</div>' +
+    '<div class="option-label">SIZE</div>' +
     '<div class="size-selector">' + sizes + '</div>' +
-    '<div style="font-weight:600;margin:10px 0">QUANTITY</div>' +
+    '<div class="option-label">QTY</div>' +
     '<div class="qty-selector"><button class="qty-btn" onclick="var e=$$(\'qty-val\');var v=parseInt(e.textContent);if(v>1)e.textContent=v-1">−</button><span id="qty-val">1</span><button class="qty-btn" onclick="var e=$$(\'qty-val\');e.textContent=parseInt(e.textContent)+1">+</button></div>' +
-    '<div style="text-align:center;font-size:1.3rem;font-weight:600;margin:15px 0">' + formatCurrency(item.price) + '</div>' +
-    '<button class="btn" onclick="addProductToCart(' + item.id + ')">ADD TO CART</button>' +
+    '<div style="margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px"><button class="btn" onclick="addProductToCart(' + item.id + ')">' + ICO.cart + ' ADD TO CART</button><button class="btn btn-secondary" onclick="navigate(\'cartView\')">' + ICO.cart + ' VIEW CART</button></div>' +
     '</div>';
 };
 function addProductToCart(itemId) {
@@ -312,7 +364,8 @@ function addProductToCart(itemId) {
   if (!item) return;
   var qty = parseInt($$('qty-val').textContent) || 1;
   var selSize = document.querySelector('.size-btn.active');
-  state.cart.push({ name: item.name, qty: qty, price: item.price, size: selSize ? selSize.textContent : '-', color: item.color });
+  var selColor = document.querySelector('.color-swatch.active');
+  state.cart.push({ name: item.name + ' ' + item.code, qty: qty, price: item.price, size: selSize ? selSize.textContent : '-', color: selColor ? selColor.getAttribute('data-color') : item.color, image: item.image });
   showToast(item.name + ' added to cart!');
   navigate('orderCategory');
 }
@@ -320,43 +373,62 @@ function addProductToCart(itemId) {
 // 13. Cart
 views.cartView = function() {
   var rows = state.cart.map(function(item, i) {
-    return '<tr><td>' + item.name + '</td><td>' + item.qty + '</td><td>' + item.price + '</td><td>' + (item.qty * item.price) + '</td><td><span style="color:#e74c3c;cursor:pointer" onclick="state.cart.splice(' + i + ',1);navigate(\'cartView\')">✕</span></td></tr>';
+    var label = item.name + (item.color && item.color !== '-' ? '<br><span style="opacity:.6">' + item.color + (item.size && item.size !== '-' ? ' / Size ' + item.size : '') + '</span>' : '');
+    return '<tr><td>' + label + '</td><td>' + item.qty + '</td><td>' + item.price + '</td><td>' + (item.qty * item.price) + '</td><td><span style="color:#b33a2d;cursor:pointer;font-weight:700" onclick="state.cart.splice(' + i + ',1);navigate(\'cartView\')">X</span></td></tr>';
   }).join('');
   if (state.cart.length === 0) rows = '<tr><td colspan="5" style="text-align:center;opacity:0.5">Cart is empty</td></tr>';
   var subtotal = state.cart.reduce(function(s, i) { return s + i.qty * i.price; }, 0);
+  var discount = state._cartDiscount != null ? state._cartDiscount : (subtotal ? 150 : 0);
+  var delivery = state._cartDelivery == null ? 100 : state._cartDelivery;
+  var net = subtotal - discount + delivery;
 
   $('app').innerHTML = '<div class="view">' +
-    topNav('orderCategory', 'BACK TO SHOP') +
+    topNav('orderCategory', 'EXIT') +
+    clientBlock() +
     '<div class="hub-title">CART</div>' +
-    '<table class="data-table"><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th></th></tr>' + rows + '</table>' +
+    '<table class="data-table"><tr><th>Items</th><th>Qty.</th><th>Amount</th><th>Total</th><th></th></tr>' + rows + '</table>' +
+    '<div style="display:flex;justify-content:center;margin:16px 0"><label class="cart-btn" style="min-width:170px;min-height:50px"><input type="checkbox" checked style="accent-color:var(--color-primary)"> DELIVERY</label></div>' +
     '<div class="invoice-box" style="margin-top:15px">' +
-    '<div class="total-row"><span>SUBTOTAL</span><span>' + subtotal + '</span></div>' +
-    '<div class="total-row"><span>DISCOUNT</span><span><input type="number" id="f-disc" value="0" style="width:60px;text-align:right;border:1px solid #ccc;border-radius:8px;padding:3px"></span></div>' +
-    '<div class="total-row"><span>DELIVERY</span><span><input type="number" id="f-deliv" value="100" style="width:60px;text-align:right;border:1px solid #ccc;border-radius:8px;padding:3px"></span></div>' +
+    '<div class="total-row"><span>AMOUNT TOTAL</span><span id="cart-subtotal">' + subtotal + '</span></div>' +
+    '<div class="total-row"><span>DISCOUNT</span><span><input type="number" id="f-disc" value="' + discount + '" oninput="updateCartTotals()" style="width:86px;text-align:right;border:1px solid var(--color-border);border-radius:8px;padding:5px"></span></div>' +
+    '<div class="total-row"><span>DELIVERY</span><span><input type="number" id="f-deliv" value="' + delivery + '" oninput="updateCartTotals()" style="width:86px;text-align:right;border:1px solid var(--color-border);border-radius:8px;padding:5px"></span></div>' +
     '<hr style="margin:10px 0;border:none;border-top:1px solid var(--color-primary)">' +
-    '<div class="total-row" style="font-size:1.2rem"><span>NET TOTAL</span><span id="net-total">' + (subtotal + 100) + ' AED</span></div>' +
+    '<div class="total-row" style="font-size:1.45rem"><span>TOTAL</span><span id="net-total">' + net + '</span></div>' +
     '</div>' +
     '<button class="btn" style="margin-top:15px" onclick="' + (subtotal > 0 ? "navigate('checkoutView')" : "showToast('Cart is empty')") + '">CHECKOUT</button>' +
     '</div>';
 };
+function updateCartTotals() {
+  var subtotal = state.cart.reduce(function(s, i) { return s + i.qty * i.price; }, 0);
+  var discount = parseFloat($$('f-disc').value) || 0;
+  var delivery = parseFloat($$('f-deliv').value) || 0;
+  state._cartDiscount = discount;
+  state._cartDelivery = delivery;
+  state._currentOrderNum = null;
+  state._currentTotal = null;
+  if ($$('net-total')) $$('net-total').textContent = (subtotal - discount + delivery).toFixed(2);
+}
 
 // 14. Checkout
 views.checkoutView = function() {
   var subtotal = state.cart.reduce(function(s, i) { return s + i.qty * i.price; }, 0);
-  var vat = (subtotal * 0.05).toFixed(2);
-  var total = (subtotal + parseFloat(vat) + 100).toFixed(2);
-  var orderNum = genOrderNum();
-  state._currentOrderNum = orderNum;
+  var discount = state._cartDiscount != null ? state._cartDiscount : (subtotal ? 150 : 0);
+  var delivery = state._cartDelivery == null ? 100 : state._cartDelivery;
+  var vat = ((subtotal - discount) * 0.05).toFixed(2);
+  var total = (subtotal - discount + parseFloat(vat) + delivery).toFixed(2);
+  if (!state._currentOrderNum) state._currentOrderNum = genOrderNum();
   state._currentTotal = total;
 
   $('app').innerHTML = '<div class="view">' +
-    topNav('cartView', 'BACK') +
+    topNav('cartView', 'BACK TO CART') +
+    clientBlock() +
     '<div class="hub-title">CHECK OUT</div>' +
-    '<div style="text-align:center;font-weight:600;margin-bottom:15px">ORDER NUMBER: ' + orderNum + '</div>' +
+    '<div style="text-align:center;font-weight:600;margin-bottom:15px;font-family:var(--font-mono)">ORDER NUMBER: ' + state._currentOrderNum + '</div>' +
     '<div class="invoice-box">' +
     '<div class="total-row"><span>SUBTOTAL</span><span>' + subtotal + '</span></div>' +
+    '<div class="total-row"><span>DISCOUNT</span><span>' + discount + '</span></div>' +
     '<div class="total-row"><span>5% VAT</span><span>' + vat + '</span></div>' +
-    '<div class="total-row"><span>DELIVERY</span><span>100</span></div>' +
+    '<div class="total-row"><span>DELIVERY</span><span>' + delivery + '</span></div>' +
     '<hr style="margin:10px 0;border:none;border-top:1px solid var(--color-primary)">' +
     '<div class="total-row" style="font-size:1.3rem"><span>TOTAL</span><span>' + total + ' AED</span></div>' +
     '</div>' +
@@ -384,10 +456,10 @@ views.invoiceView = function() {
       '<button class="btn" style="background:#25D366;margin-top:5px" onclick="showToast(\'WhatsApp link sent!\')">' + ICO.whatsapp + ' SEND VIA WHATSAPP</button>';
   }
 
-  $('app').innerHTML = '<div class="view" style="background:white">' +
+  $('app').innerHTML = '<div class="view" style="background:#fff;color:#222">' +
     topNav('checkoutView', 'BACK') +
     '<div class="hub-title">TAX INVOICE</div>' +
-    '<div style="text-align:center;font-size:0.8rem;margin-bottom:15px">INV: 0055005544891321</div>' +
+    '<div class="invoice-box" style="margin-bottom:10px"><div class="total-row"><span>CLIENT NAME</span><span>' + clientName() + '</span></div><div class="total-row"><span>NUMBER</span><span>*** *** ' + clientMobile().slice(-4) + '</span></div><div class="total-row"><span>ORDER NUMBER</span><span>' + state._currentOrderNum + '</span></div><div class="total-row"><span>INVOICE NUMBER</span><span>0055005544891321</span></div></div>' +
     '<div class="payment-modes">' + tabs + '</div>' +
     '<div class="invoice-box" style="box-shadow:none;border:1px dashed var(--color-primary)">' +
     '<div class="total-row"><span>ADVANCE PAYMENT:</span><span><input type="number" id="f-advance" value="0" style="width:80px;text-align:right;border:1px solid #ccc;border-radius:8px;padding:3px" oninput="$$(\'amt-due\').textContent=(' + total + '-parseFloat(this.value||0)).toFixed(2)"></span></div>' +
@@ -403,8 +475,10 @@ views.invoiceView = function() {
 };
 function completeOrder() {
   var orderItems = state.cart.map(function(c) { return { name: c.name, qty: c.qty, price: c.price, status: 'Measured' }; });
-  state.orders.push({ id: state._currentOrderNum, client: state.client.name, mobile: state.client.mobile, items: orderItems, total: parseFloat(state._currentTotal), date: new Date().toISOString().slice(0, 10), paid: true });
+  state.orders.push({ id: state._currentOrderNum, client: clientName(), mobile: clientMobile(), items: orderItems, total: parseFloat(state._currentTotal), date: new Date().toISOString().slice(0, 10), paid: true });
   state.cart = [];
+  state._currentOrderNum = null;
+  state._currentTotal = null;
   showToast('Order ' + state._currentOrderNum + ' completed!');
   navigate('salesHub');
 }
@@ -471,39 +545,40 @@ views.orderDetailView = function() {
   }).join('');
   $('app').innerHTML = '<div class="view">' +
     topNav('orderHistory', 'BACK') +
-    '<div class="hub-title">ORDER ' + o.id + '</div>' +
-    '<div style="margin-bottom:10px"><strong>Client:</strong> ' + o.client + '<br><strong>Mobile:</strong> ' + o.mobile + '<br><strong>Date:</strong> ' + o.date + '<br><strong>Total:</strong> ' + formatCurrency(o.total) + '<br><strong>Paid:</strong> ' + (o.paid ? 'Yes' : 'No') + '</div>' +
+    pageHeading('ORDER DETAIL') +
+    panel('<div class="total-row"><span>ORDER NUMBER</span><span>' + o.id + '</span></div><div class="total-row"><span>CLIENT NAME</span><span>' + o.client + '</span></div><div class="total-row"><span>NUMBER</span><span>' + o.mobile + '</span></div><div class="total-row"><span>DATE</span><span>' + o.date + '</span></div><div class="total-row"><span>TOTAL</span><span>' + formatCurrency(o.total) + '</span></div><div class="total-row"><span>STATUS</span><span>' + (o.paid ? statusBadge('Fully Paid') : statusBadge('Payment Pending')) + '</span></div>') +
     '<table class="data-table"><tr><th>Item</th><th>Qty</th><th>Price</th><th>Status</th></tr>' + itemRows + '</table>' +
-    '<div style="display:flex;gap:8px;margin-top:15px;flex-wrap:wrap">' +
-    '<button class="btn" style="flex:1;font-size:0.8rem" onclick="showModal(\'File Complaint\',\'<textarea class=input-field placeholder=Describe\\ issue... style=min-height:80px;border-radius:15px;text-align:left></textarea>\',function(){showToast(\\\'Complaint filed!\\\')})">FILE COMPLAINT</button>' +
-    '<button class="btn" style="flex:1;font-size:0.8rem" onclick="showModal(\'Return to Inventory\',\'<p>Return items from order ' + o.id + ' to inventory?</p>\',function(){showToast(\\\'Items returned!\\\')})">RETURN TO INVENTORY</button>' +
-    '<button class="btn" style="flex:1;font-size:0.8rem" onclick="showModal(\'Request Return Sale\',\'<p>Request refund for order ' + o.id + '?</p>\',function(){showToast(\\\'Return requested!\\\')})">REQUEST RETURN</button>' +
+    '<div class="action-row" style="margin-top:15px">' +
+    '<button class="btn" onclick="showModal(\'File Complaint\',\'<textarea class=input-field placeholder=Describe\\ issue...></textarea>\',function(){showToast(\\\'Complaint filed!\\\')})">FILE COMPLAINT</button>' +
+    '<button class="btn btn-secondary" onclick="showModal(\'Return to Inventory\',\'<p>Return items from order ' + o.id + ' to inventory?</p>\',function(){showToast(\\\'Items returned!\\\')})">RETURN TO INVENTORY</button>' +
+    '<button class="btn btn-secondary" onclick="showModal(\'Collect Pending Amount\',\'<p>Collect pending payment for order ' + o.id + '?</p>\',function(){showToast(\\\'Payment collected!\\\')})">COLLECT PENDING</button>' +
+    '<button class="btn btn-secondary" onclick="showModal(\'Request Return Sale\',\'<p>Request refund for order ' + o.id + '?</p>\',function(){showToast(\\\'Return requested!\\\')})">REQUEST RETURN</button>' +
     '</div></div>';
 };
 
 // 19. Sales Operations
 views.salesOperations = function() {
   $('app').innerHTML = '<div class="view">' +
-    topNav('salesHub', 'BACK') +
-    '<div class="hub-title">SALES OPERATIONS</div>' +
-    '<div class="warning-box"><strong>⚠ CASH TURNOVER REQUIRED</strong><p>Please turnover the amount to the cashier within 24 hours.</p></div>' +
-    '<div class="invoice-box" style="text-align:center;margin-top:15px"><div style="opacity:0.6">AMOUNT TO TURNOVER</div><div style="font-size:2rem;font-weight:600" id="turnover-amt">' + state.cashTurnover + ' AED</div></div>' +
+    topNav('salesHub', 'EXIT', salesPersonInfo()) +
+    pageHeading('SALES OPERATIONS') +
+    '<div class="warning-box"><strong>NOTE:</strong> PLEASE TURNOVER THE AMOUNT TO THE CASHIER WITHIN 24 HRS.</div>' +
+    panel('<div style="text-align:center"><div style="font-family:var(--font-mono);opacity:.72">AMOUNT TO TURNOVER:</div><div style="font-size:2.35rem;font-weight:700;color:var(--color-primary)" id="turnover-amt">' + state.cashTurnover + ' AED</div></div>') +
     '<button class="btn" style="margin-top:15px" onclick="state.cashTurnover=0;$$(\'turnover-amt\').textContent=\'0 AED\';showToast(\'Cash turned over successfully!\')">TURNOVER</button>' +
-    '<div style="margin-top:20px;font-weight:600">NOTIFICATIONS</div>' +
-    '<div class="warning-box" style="margin-top:10px">⚠ Issue with Order #A2025-0036 — Payment pending from MR. ASUMA</div>' +
+    '<div class="option-label">NOTIFICATIONS</div>' +
+    '<div class="warning-box">ISSUES WITH ORDER #5521 CALL MANUFACTURING</div><div class="warning-box">TURNOVER PAYMENT OF ORDER #2211</div>' +
     '</div>';
 };
 
 // 20. Sales Pending
 views.salesPending = function() {
   var cards = state.pendingOrders.map(function(p, i) {
-    return '<div class="invoice-box" style="margin-top:10px"><div style="font-weight:600">' + p.client + '</div><div style="opacity:0.6;font-size:0.8rem">' + p.mobile + ' · ' + p.items + ' items · Last: ' + p.lastUpdated + '</div>' +
-      '<div style="display:flex;gap:8px;margin-top:10px"><button class="btn" style="flex:1;font-size:0.85rem" onclick="state.client.name=\'' + p.client + '\';state.client.mobile=\'' + p.mobile + '\';navigate(\'orderCategory\')">CONTINUE</button><button class="btn btn-secondary" style="flex:1;font-size:0.85rem" onclick="state.pendingOrders.splice(' + i + ',1);navigate(\'salesPending\');showToast(\'Order cancelled\')">CANCEL</button></div></div>';
+    return '<div class="invoice-box" style="margin-top:10px"><div class="total-row"><span>CLIENT DETAILS</span><span>' + p.client + '</span></div><div class="total-row"><span>CONTACT</span><span>' + p.mobile + '</span></div><div class="total-row"><span>QTY</span><span>' + p.items + '</span></div><div class="total-row"><span>DATE</span><span>' + p.lastUpdated + '</span></div>' +
+      '<div class="action-row" style="margin-top:10px"><button class="btn" onclick="state.client.name=\'' + p.client + '\';state.client.mobile=\'' + p.mobile + '\';navigate(\'orderCategory\')">CONTINUE</button><button class="btn btn-secondary" onclick="state.pendingOrders.splice(' + i + ',1);navigate(\'salesPending\');showToast(\'Order cancelled\')">CANCEL</button></div></div>';
   }).join('');
   if (state.pendingOrders.length === 0) cards = '<div style="text-align:center;opacity:0.5;margin-top:30px">No pending orders</div>';
   $('app').innerHTML = '<div class="view">' +
-    topNav('salesHub', 'BACK') +
-    '<div class="hub-title">SALES PENDING</div>' + cards + '</div>';
+    topNav('salesHub', 'EXIT', salesPersonInfo()) +
+    pageHeading('SALES PENDING') + cards + '</div>';
 };
 
 // 21. Manufacturing Hub
@@ -516,7 +591,7 @@ views.manufacturingHub = function() {
   });
   $('app').innerHTML = '<div class="view">' +
     topNav('adminHub', 'EXIT') +
-    '<div class="hub-title">CUTTING ORDERS</div>' +
+    pageHeading('CUTTING ORDERS') +
     '<table class="data-table"><tr><th>Order</th><th>Item</th><th>Qty</th><th>Client</th><th>Status</th></tr>' + rows + '</table></div>';
 };
 
@@ -527,10 +602,10 @@ views.tailorAssignment = function() {
   var tailorOpts = state.tailors.map(function(t) { return '<option value="' + t.id + '">' + t.name + ' — ' + t.specialty + '</option>'; }).join('');
   $('app').innerHTML = '<div class="view">' +
     topNav('manufacturingHub', 'BACK') +
-    '<div class="hub-title">TAILOR ASSIGNMENT</div>' +
-    '<div class="invoice-box"><div style="font-weight:600">Order: ' + o.id + ' — ' + o.client + '</div><div style="margin-top:10px">' + o.items.map(function(i) { return i.name + ' x' + i.qty + ' (' + statusBadge(i.status) + ')'; }).join('<br>') + '</div></div>' +
-    '<div class="warning-box" style="margin-top:15px">⚠ Need 1 more tailor to start order</div>' +
-    '<div style="margin-top:15px"><div style="font-weight:600;margin-bottom:8px">Assign Tailor</div><select class="input-field" id="f-tailor">' + tailorOpts + '</select></div>' +
+    pageHeading('ORDER ' + o.id) +
+    panel('<div class="total-row"><span>CLIENT:</span><span>' + o.client + '</span></div><div style="font-family:var(--font-mono);line-height:1.55">' + o.items.map(function(i) { return i.name + ' x' + i.qty + ' ' + statusBadge(i.status); }).join('<br>') + '</div>') +
+    '<div class="warning-box" style="margin-top:15px">NOTE: NEED 1 MORE TAILOR TO START ORDER</div>' +
+    '<div class="option-label">ADD TAILOR</div><select class="input-field" id="f-tailor">' + tailorOpts + '</select>' +
     '<button class="btn" onclick="showToast(\'Tailor assigned! Order started.\')">START ORDER</button>' +
     '<button class="btn" style="background:#25D366;margin-top:5px" onclick="showWhatsAppMsg()">SEND WHATSAPP ' + ICO.whatsapp + '</button>' +
     '</div>';
@@ -546,43 +621,45 @@ function showWhatsAppMsg() {
 views.deliveryHub = function() {
   $('app').innerHTML = '<div class="view">' +
     topNav('adminHub', 'EXIT') +
-    '<div class="hub-title">WELCOME MR. DELIVERY</div>' +
+    '<div style="flex:1;display:flex;flex-direction:column;justify-content:center">' +
+    '<div class="hub-title">WELCOME MR. DELIVERY GUY</div>' +
     '<div class="grid-menu">' +
     gridItem('deliveryList', ICO.truck, 'Delivery List') +
     gridItem('deliveryOperations', ICO.box, 'Delivery Operations') +
-    '</div></div>';
+    '</div></div></div>';
 };
 views.deliveryList = function() {
   var rows = state.deliveries.map(function(d) {
     return '<tr><td>' + d.date + '</td><td>' + d.pickup + '</td><td>' + d.dropoff + '</td><td>' + d.items + '</td><td>' + d.client + '<br><span style="font-size:0.75rem;opacity:0.6">' + d.phone + '</span></td><td>' + statusBadge(d.paymentStatus) + '</td></tr>';
   }).join('');
   $('app').innerHTML = '<div class="view">' +
-    topNav('deliveryHub', 'BACK') +
-    '<div class="hub-title">DELIVERY REQUESTS</div>' +
+    topNav('deliveryHub', 'EXIT') +
+    pageHeading('DELIVERY REQUESTS') +
     '<table class="data-table"><tr><th>Date</th><th>Pick-Up</th><th>Drop-Off</th><th>Items</th><th>Client</th><th>Payment</th></tr>' + rows + '</table></div>';
 };
 views.deliveryOperations = function() {
   var cards = state.deliveries.map(function(d) {
     var action = d.status === 'Pending' ? '<button class="btn" style="font-size:0.8rem" onclick="showToast(\'Proceeding to pick-up\')">PROCEED TO PICK-UP</button>' : '<button class="btn" style="font-size:0.8rem" onclick="showToast(\'Proceeding to payment\')">PROCEED TO PAYMENT</button>';
-    return '<div class="invoice-box" style="margin-top:10px"><div style="font-weight:600">' + d.orderNum + ' — ' + d.client + '</div><div style="opacity:0.6;font-size:0.8rem">' + d.pickup + ' → ' + d.dropoff + '</div><div style="margin-top:5px">' + d.items + ' · ' + statusBadge(d.paymentStatus) + '</div>' + action + '</div>';
+    return '<div class="invoice-box" style="margin-top:10px"><div class="total-row"><span>' + d.orderNum + '</span><span>' + statusBadge(d.paymentStatus) + '</span></div><div class="total-row"><span>CLIENT NAME</span><span>' + d.client + '</span></div><div class="total-row"><span>PICK UP LOC:</span><span>' + d.pickup + '</span></div><div class="total-row"><span>DROP OFF LOC:</span><span>' + d.dropoff + '</span></div><div class="total-row"><span>ITEMS</span><span>' + d.items + '</span></div>' + action + '</div>';
   }).join('');
   $('app').innerHTML = '<div class="view">' +
-    topNav('deliveryHub', 'BACK') +
-    '<div class="hub-title">DELIVERY OPERATIONS</div>' +
-    '<div class="warning-box">⚠ Please turnover collected payments within 24 hours.</div>' + cards + '</div>';
+    topNav('deliveryHub', 'EXIT') +
+    pageHeading('DELIVERY OPERATIONS') +
+    '<div class="warning-box">NOTE: PLEASE TURNOVER THE AMOUNT TO THE CASHIER WITHIN 24 HRS.</div>' + cards + '</div>';
 };
 
 // 26-30. Accountant Hub
 views.accountantHub = function() {
   $('app').innerHTML = '<div class="view">' +
     topNav('adminHub', 'EXIT') +
+    '<div style="flex:1;display:flex;flex-direction:column;justify-content:center">' +
     '<div class="hub-title">WELCOME MR. ACCOUNTANT</div>' +
     '<div class="grid-menu">' +
     gridItem('accountReceivables', ICO.dollar, 'Account Receivables') +
     gridItem('cashManagement', ICO.box, 'Cash Management') +
     gridItem('employeeRecords', ICO.user, 'Employee Records') +
     gridItem('financeReports', ICO.mfg, 'Finance Reports') +
-    '</div></div>';
+    '</div></div></div>';
 };
 views.accountReceivables = function() {
   var rows = state.orders.map(function(o) {
@@ -590,34 +667,34 @@ views.accountReceivables = function() {
   }).join('');
   $('app').innerHTML = '<div class="view">' +
     topNav('accountantHub', 'BACK') +
-    '<div class="hub-title">ACCOUNT RECEIVABLES</div>' +
+    pageHeading('ACCOUNT RECEIVABLES') +
     '<table class="data-table"><tr><th>Order</th><th>Client</th><th>Amount</th><th>Status</th></tr>' + rows + '</table></div>';
 };
 views.cashManagement = function() {
   var totalSales = state.orders.reduce(function(s, o) { return s + o.total; }, 0);
   $('app').innerHTML = '<div class="view">' +
     topNav('accountantHub', 'BACK') +
-    '<div class="hub-title">CASH MANAGEMENT</div>' +
-    '<div class="invoice-box"><div class="total-row"><span>TOTAL SALES</span><span>' + totalSales + ' AED</span></div><div class="total-row"><span>EXPENSES</span><span>1200 AED</span></div><hr style="margin:10px 0;border:none;border-top:1px solid var(--color-primary)"><div class="total-row" style="font-size:1.2rem"><span>BALANCE</span><span>' + (totalSales - 1200) + ' AED</span></div></div></div>';
+    pageHeading('CASH MANAGEMENT') +
+    panel('<div class="total-row"><span>TOTAL SALES</span><span>' + totalSales + ' AED</span></div><div class="total-row"><span>EXPENSES</span><span>1200 AED</span></div><hr style="margin:10px 0;border:none;border-top:1px solid var(--color-primary)"><div class="total-row" style="font-size:1.2rem"><span>BALANCE</span><span>' + (totalSales - 1200) + ' AED</span></div>') + '</div>';
 };
 views.employeeRecords = function() {
   var tailorRows = state.tailors.map(function(t) { return '<tr><td>' + t.name + '</td><td>' + t.phone + '</td><td>' + t.specialty + '</td></tr>'; }).join('');
   $('app').innerHTML = '<div class="view">' +
     topNav('accountantHub', 'BACK') +
-    '<div class="hub-title">EMPLOYEE RECORDS</div>' +
-    '<div style="font-weight:600;margin-bottom:5px">TAILORS</div>' +
+    pageHeading('EMPLOYEE RECORDS') +
+    '<div class="option-label">TAILORS</div>' +
     '<table class="data-table"><tr><th>Name</th><th>Phone</th><th>Specialty</th></tr>' + tailorRows + '</table>' +
-    '<div style="font-weight:600;margin:15px 0 5px">SALES STAFF</div>' +
+    '<div class="option-label">SALES STAFF</div>' +
     '<table class="data-table"><tr><th>Name</th><th>Phone</th><th>Role</th></tr><tr><td>Mohammad</td><td>+971 50 222 3344</td><td>Sales Person</td></tr></table></div>';
 };
 views.financeReports = function() {
   var totalSales = state.orders.reduce(function(s, o) { return s + o.total; }, 0);
   $('app').innerHTML = '<div class="view">' +
     topNav('accountantHub', 'BACK') +
-    '<div class="hub-title">FINANCE REPORTS</div>' +
-    '<div style="font-weight:600;margin-bottom:5px">SALES REPORT</div>' +
+    pageHeading('FINANCE REPORTS') +
+    '<div class="option-label">SALES REPORT</div>' +
     '<div class="invoice-box"><div class="total-row"><span>Total Orders</span><span>' + state.orders.length + '</span></div><div class="total-row"><span>Total Revenue</span><span>' + totalSales + ' AED</span></div><div class="total-row"><span>Paid Orders</span><span>' + state.orders.filter(function(o) { return o.paid; }).length + '</span></div></div>' +
-    '<div style="font-weight:600;margin:15px 0 5px">EXPENSE REPORT</div>' +
+    '<div class="option-label">EXPENSE REPORT</div>' +
     '<div class="invoice-box"><div class="total-row"><span>Fabric Costs</span><span>800 AED</span></div><div class="total-row"><span>Labor Costs</span><span>400 AED</span></div><div class="total-row" style="font-weight:600"><span>Total Expenses</span><span>1200 AED</span></div></div></div>';
 };
 
@@ -625,6 +702,7 @@ views.financeReports = function() {
 views.inventoryHub = function() {
   $('app').innerHTML = '<div class="view">' +
     topNav('adminHub', 'EXIT') +
+    '<div style="flex:1;display:flex;flex-direction:column;justify-content:center">' +
     '<div class="hub-title">WELCOME MR. INVENTORY</div>' +
     '<div class="grid-menu">' +
     gridItem('inventoryOrders', ICO.box, 'View Orders') +
@@ -633,7 +711,7 @@ views.inventoryHub = function() {
     gridItem('manageFabric', ICO.mfg, 'Manage Fabric') +
     gridItem('addItemsMenu', ICO.dollar, 'Add Items') +
     gridItem('manageItems', ICO.box, 'Manage Items') +
-    '</div></div>';
+    '</div></div></div>';
 };
 views.inventoryOrders = function() {
   var rows = '';
@@ -644,7 +722,7 @@ views.inventoryOrders = function() {
   });
   $('app').innerHTML = '<div class="view">' +
     topNav('inventoryHub', 'BACK') +
-    '<div class="hub-title">VIEW ORDERS</div>' +
+    pageHeading('VIEW ORDERS') +
     '<table class="data-table"><tr><th>Order</th><th>Item</th><th>Qty</th><th>Status</th></tr>' + rows + '</table></div>';
 };
 views.inventoryOutflow = function() {
@@ -653,20 +731,22 @@ views.inventoryOutflow = function() {
   }).join('');
   $('app').innerHTML = '<div class="view">' +
     topNav('inventoryHub', 'BACK') +
-    '<div class="hub-title">INVENTORY OUTFLOW</div>' +
+    pageHeading('OUTFLOW') +
+    '<div class="search-bar"><input class="input-field" placeholder="START DATE"><input class="input-field" placeholder="END DATE"></div>' +
     '<table class="data-table"><tr><th>Item Type</th><th>Order #</th><th>Qty</th><th>Date</th></tr>' + rows + '</table>' +
     '<button class="btn btn-secondary" style="margin-top:10px" onclick="window.print()">' + ICO.print + ' PRINT</button></div>';
 };
 views.addFabric = function() {
   $('app').innerHTML = '<div class="view">' +
     topNav('inventoryHub', 'BACK') +
-    '<div class="hub-title">ADD FABRIC</div>' +
+    pageHeading('ADD FABRIC') +
+    '<div class="form-panel">' +
     '<input class="input-field" placeholder="FABRIC TYPE" id="f-fabtype">' +
     '<input class="input-field" placeholder="SHOP CODE" id="f-fabcode">' +
     '<input class="input-field" placeholder="COLOR(S)" id="f-fabcolor">' +
     '<select class="input-field" id="f-fabcat"><option value="Kandura">Kandura</option><option value="Mugasr">Mugasr</option><option value="Jalabiya">Jalabiya</option></select>' +
     '<textarea class="input-field" placeholder="NOTES" id="f-fabnotes" style="border-radius:15px;text-align:left;min-height:60px"></textarea>' +
-    '<button class="btn" onclick="saveFabric()">SAVE FABRIC</button></div>';
+    '<button class="btn" onclick="saveFabric()">ADD FABRIC</button></div></div>';
 };
 function saveFabric() {
   var t = $$('f-fabtype').value, c = $$('f-fabcode').value, co = $$('f-fabcolor').value, cat = $$('f-fabcat').value;
@@ -681,18 +761,20 @@ views.manageFabric = function() {
   }).join('');
   $('app').innerHTML = '<div class="view">' +
     topNav('inventoryHub', 'BACK') +
-    '<div class="hub-title">MANAGE FABRIC</div>' +
+    pageHeading('MANAGE FABRIC') +
+    '<div class="search-bar"><input class="input-field" placeholder="SEARCH"><button class="btn" style="width:110px">' + ICO.search + '</button></div>' +
     '<table class="data-table"><tr><th>Type</th><th>Code</th><th>Color</th><th>Category</th><th>Date</th><th></th></tr>' + rows + '</table></div>';
 };
 views.addItemsMenu = function() {
   $('app').innerHTML = '<div class="view">' +
     topNav('inventoryHub', 'BACK') +
-    '<div class="hub-title">ADD ITEMS</div>' +
+    pageHeading('ADD ITEMS') +
+    '<div class="category-list">' +
     catItem2('addItemForm-Sandal', 'SANDALS') +
     catItem2('addItemForm-Jacket', 'JACKETS') +
     catItem2('addItemForm-Accessory', 'HEAD ACCESSORIES') +
     catItem2('addItemForm-HeadDress', 'UNDER GARMENTS') +
-    '</div>';
+    '</div></div>';
 };
 function catItem2(view, label) {
   return '<div class="category-item" onclick="navigate(\'' + view + '\')"><span class="category-label">' + label + '</span><div class="category-icon">' + ICO.shirt + '</div></div>';
@@ -703,14 +785,15 @@ function catItem2(view, label) {
   views['addItemForm-' + type] = function() {
     $('app').innerHTML = '<div class="view">' +
       topNav('addItemsMenu', 'BACK') +
-      '<div class="hub-title">ADD ' + type.toUpperCase() + '</div>' +
+      pageHeading('ADD ' + type.toUpperCase()) +
+      '<div class="form-panel">' +
       '<input class="input-field" placeholder="NAME" id="f-iname">' +
       '<div class="row-inputs"><input class="input-field" placeholder="COLOR" id="f-icolor"><input class="input-field" placeholder="CODE" id="f-icode"></div>' +
       '<div class="row-inputs"><input class="input-field" placeholder="SIZES (comma sep)" id="f-isizes" value="38,39,40,41,42"><input type="number" class="input-field" placeholder="QTY" id="f-iqty" value="10"></div>' +
       '<input type="number" class="input-field" placeholder="PRICE" id="f-iprice">' +
       '<textarea class="input-field" placeholder="DESCRIPTION" id="f-idesc" style="border-radius:15px;text-align:left;min-height:50px"></textarea>' +
       '<div class="product-detail-img" style="margin-bottom:15px">IMAGE PLACEHOLDER<br><span style="font-size:0.8rem;opacity:0.5">Upload feature coming soon</span></div>' +
-      '<button class="btn" onclick="saveItem(\'' + type + '\')">SAVE ITEM</button></div>';
+      '<button class="btn" onclick="saveItem(\'' + type + '\')">ADD ITEM</button></div></div>';
   };
 });
 function saveItem(type) {
@@ -738,7 +821,8 @@ views.manageItems = function() {
   }).join('');
   $('app').innerHTML = '<div class="view">' +
     topNav('inventoryHub', 'BACK') +
-    '<div class="hub-title">MANAGE ITEMS</div>' +
+    pageHeading('MANAGE ITEMS') +
+    '<div class="search-bar"><input class="input-field" placeholder="SEARCH"><button class="btn" style="width:110px">' + ICO.search + '</button></div>' +
     '<div class="tab-group">' + tabs + '</div>' +
     '<table class="data-table"><tr><th>Name</th><th>Code</th><th>Color</th><th>Sizes</th><th>Qty</th><th>Price</th><th></th></tr>' + rows + '</table></div>';
 };
